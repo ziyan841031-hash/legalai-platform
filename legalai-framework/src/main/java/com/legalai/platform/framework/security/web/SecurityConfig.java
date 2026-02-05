@@ -26,8 +26,12 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // 关闭 CSRF
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 无状态
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/api/pc/health", "/api/wxapp/health", "/api/wxapp/auth/**", "/api/auth/refresh")
-                .permitAll() // 放行公共接口
+                .requestMatchers("/api/pc/health", "/api/wxapp/health")
+                .permitAll() // 放行健康检查
+                .requestMatchers("/api/wxapp/auth/login", "/api/pc/auth/login", "/api/auth/login")
+                .permitAll() // 放行首次登录
+                .requestMatchers("/api/wxapp/auth/**", "/api/auth/refresh")
+                .permitAll() // 放行刷新接口
                 .anyRequest().authenticated() // 其他接口需要认证
             )
             .httpBasic(Customizer.withDefaults()); // 保留默认 basic 配置
