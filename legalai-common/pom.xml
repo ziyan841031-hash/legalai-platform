@@ -13,6 +13,9 @@
     <artifactId>legalai-common</artifactId>
     <name>legalai-platform-common</name>
     <packaging>jar</packaging>
+    <properties>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+    </properties>
 
     <dependencies>
         <dependency>

@@ -13,6 +13,9 @@
     <artifactId>legalai-admin</artifactId>
     <name>legalai-platform-admin</name>
     <packaging>jar</packaging>
+    <properties>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+    </properties>
 
     <dependencies>
         <dependency>

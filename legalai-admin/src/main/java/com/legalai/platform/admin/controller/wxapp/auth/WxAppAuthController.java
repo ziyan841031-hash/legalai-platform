@@ -15,20 +15,24 @@ public class WxAppAuthController {
 
     private final TokenManager tokenManager;
 
+    // 构造方法注入 TokenManager
     public WxAppAuthController(TokenManager tokenManager) {
+        // 保存依赖
         this.tokenManager = tokenManager;
     }
 
+    // 微信小程序登录接口
     @PostMapping("/login")
     public ResponseEntity<TokenPair> login(@RequestBody WxAppLoginRequest request) {
-        // TODO: exchange request.code with WeChat session API and map to user subject.
-        TokenPair tokenPair = tokenManager.issueTokenPair("wxapp-user:" + request.code(), Map.of());
-        return ResponseEntity.ok(tokenPair);
+        // TODO: 使用 code 调用微信接口并映射到用户主体
+        TokenPair tokenPair = tokenManager.issueTokenPair("wxapp-user:" + request.code(), Map.of()); // 生成令牌对
+        return ResponseEntity.ok(tokenPair); // 返回登录结果
     }
 
+    // 刷新令牌接口
     @PostMapping("/refresh")
     public ResponseEntity<TokenPair> refresh(@RequestBody TokenRefreshRequest request) {
-        TokenPair tokenPair = tokenManager.refreshToken(request.refreshToken());
-        return ResponseEntity.ok(tokenPair);
+        TokenPair tokenPair = tokenManager.refreshToken(request.refreshToken()); // 刷新令牌
+        return ResponseEntity.ok(tokenPair); // 返回刷新结果
     }
 }

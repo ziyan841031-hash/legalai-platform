@@ -13,22 +13,25 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    // 构造方法注入过滤器
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        // 保存依赖
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
+    // 配置安全过滤链
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        http // 配置 HttpSecurity
+            .csrf(csrf -> csrf.disable()) // 关闭 CSRF
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 无状态
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/api/pc/health", "/api/wxapp/health", "/api/wxapp/auth/**", "/api/auth/refresh")
-                .permitAll()
-                .anyRequest().authenticated()
+                .permitAll() // 放行公共接口
+                .anyRequest().authenticated() // 其他接口需要认证
             )
-            .httpBasic(Customizer.withDefaults());
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
+            .httpBasic(Customizer.withDefaults()); // 保留默认 basic 配置
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // 添加 JWT 过滤器
+        return http.build(); // 构建过滤链
     }
 }

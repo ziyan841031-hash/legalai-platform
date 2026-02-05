@@ -22,27 +22,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenManager tokenManager;
 
+    // 构造方法注入 TokenManager
     public JwtAuthenticationFilter(TokenManager tokenManager) {
+        // 保存依赖
         this.tokenManager = tokenManager;
     }
 
+    // 过滤请求并解析 JWT
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
         throws ServletException, IOException {
-        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION); // 获取授权头
+        if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) { // 校验格式
+            String token = authHeader.substring(7); // 截取 token
             try {
-                Jws<Claims> claims = tokenManager.parseToken(token);
-                String subject = claims.getBody().getSubject();
+                Jws<Claims> claims = tokenManager.parseToken(token); // 解析 token
+                String subject = claims.getBody().getSubject(); // 获取主体
                 UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(subject, null, Collections.emptyList());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                    new UsernamePasswordAuthenticationToken(subject, null, Collections.emptyList()); // 构造认证信息
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request)); // 设置详情
+                SecurityContextHolder.getContext().setAuthentication(authentication); // 写入上下文
             } catch (Exception ignored) {
-                SecurityContextHolder.clearContext();
+                SecurityContextHolder.clearContext(); // 清理上下文
             }
         }
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(request, response); // 放行请求
     }
 }

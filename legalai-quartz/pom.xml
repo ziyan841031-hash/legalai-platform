@@ -13,4 +13,7 @@
     <artifactId>legalai-quartz</artifactId>
     <name>legalai-platform-quartz</name>
     <packaging>jar</packaging>
+    <properties>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+    </properties>
 </project>

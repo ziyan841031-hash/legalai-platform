@@ -13,6 +13,9 @@
     <artifactId>legalai-framework</artifactId>
     <name>legalai-platform-framework</name>
     <packaging>jar</packaging>
+    <properties>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+    </properties>
 
     <dependencies>
         <dependency>
