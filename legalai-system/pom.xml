@@ -10,13 +10,13 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>user-service</artifactId>
-    <name>legalai-platform-user-service</name>
+    <artifactId>legalai-system</artifactId>
+    <name>legalai-platform-system</name>
 
     <dependencies>
         <dependency>
             <groupId>com.legalai.platform</groupId>
-            <artifactId>common</artifactId>
+            <artifactId>legalai-common</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

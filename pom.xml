@@ -10,8 +10,12 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>common</module>
-        <module>user-service</module>
+        <module>legalai-admin</module>
+        <module>legalai-framework</module>
+        <module>legalai-system</module>
+        <module>legalai-quartz</module>
+        <module>legalai-generator</module>
+        <module>legalai-common</module>
     </modules>
 
     <properties>
