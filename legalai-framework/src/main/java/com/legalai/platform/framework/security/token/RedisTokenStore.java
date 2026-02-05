@@ -5,12 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@ConditionalOnProperty(prefix = "spring.data.redis", name = "host")
 public class RedisTokenStore implements TokenStore {
 
     private static final String KEY_PREFIX = "auth:refresh:";
