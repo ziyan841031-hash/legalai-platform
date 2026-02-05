@@ -1,6 +1,6 @@
 spring:
   application:
-    name: user-service
+    name: legalai-admin
   datasource:
     url: jdbc:postgresql://localhost:5432/legalai
     username: legalai
@@ -22,3 +22,9 @@ jwt:
   issuer: legalai-platform
   secret: change-me
   expiration-seconds: 7200
+
+token:
+  issuer: legalai-platform
+  secret: change-me-change-me-change-me-change-me
+  access-token-seconds: 1800
+  refresh-token-seconds: 2592000
