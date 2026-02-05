@@ -30,7 +30,11 @@ public class WxAppAuthController {
         // 使用 code 调用微信接口
         WeChatSessionResponse sessionResponse = weChatAuthService.exchangeCode(request.code()); // 获取微信会话
         String subject = weChatAuthService.buildSubject(sessionResponse); // 生成主体
-        TokenPair tokenPair = tokenManager.issueTokenPair(subject, weChatAuthService.buildClaims(sessionResponse)); // 生成令牌对
+        Map<String, Object> claims = new java.util.HashMap<>(weChatAuthService.buildClaims(sessionResponse)); // 复制声明
+        if (request.phoneNumber() != null && !request.phoneNumber().isBlank()) {
+            claims.put("phoneNumber", request.phoneNumber()); // 追加手机号声明
+        }
+        TokenPair tokenPair = tokenManager.issueTokenPair(subject, claims); // 生成令牌对
         return ResponseEntity.ok(tokenPair); // 返回登录结果
     }
 

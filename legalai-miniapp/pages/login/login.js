@@ -1,4 +1,12 @@
 Page({
+  data: {
+    phoneNumber: ""
+  },
+  handleGetPhoneNumber(e) {
+    const phoneNumber = e.detail && e.detail.phoneNumber ? e.detail.phoneNumber : "";
+    this.setData({ phoneNumber });
+    this.handleWxLogin();
+  },
   handleWxLogin() {
     wx.login({
       success: (res) => {
@@ -10,7 +18,7 @@ Page({
         wx.request({
           url: `${app.globalData.apiBaseUrl}/api/wxapp/auth/login`,
           method: "POST",
-          data: { code: res.code },
+          data: { code: res.code, phoneNumber: this.data.phoneNumber },
           success: (resp) => {
             const { accessToken, refreshToken } = resp.data || {};
             if (accessToken && refreshToken) {
