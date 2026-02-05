@@ -2,6 +2,8 @@ package com.legalai.platform.admin.controller.wxapp.auth;
 
 import com.legalai.platform.framework.security.token.TokenManager;
 import com.legalai.platform.framework.security.token.TokenPair;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,7 +32,7 @@ public class WxAppAuthController {
         // 使用 code 调用微信接口
         WeChatSessionResponse sessionResponse = weChatAuthService.exchangeCode(request.code()); // 获取微信会话
         String subject = weChatAuthService.buildSubject(sessionResponse); // 生成主体
-        Map<String, Object> claims = new java.util.HashMap<>(weChatAuthService.buildClaims(sessionResponse)); // 复制声明
+        Map<String, Object> claims = new HashMap<>(weChatAuthService.buildClaims(sessionResponse)); // 复制声明
         if (request.phoneNumber() != null && !request.phoneNumber().isBlank()) {
             claims.put("phoneNumber", request.phoneNumber()); // 追加手机号声明
         }
