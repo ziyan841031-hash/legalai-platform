@@ -1,6 +1,6 @@
 package com.legalai.platform.admin.config;
 
-import com.legalai.platform.admin.service.wechat.WeChatAuthProperties;
+import com.legalai.platform.system.service.wechat.WeChatAuthProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

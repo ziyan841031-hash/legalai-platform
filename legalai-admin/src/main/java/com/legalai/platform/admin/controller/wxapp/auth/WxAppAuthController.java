@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.legalai.platform.admin.service.wechat.WeChatAuthService;
-import com.legalai.platform.admin.service.wechat.WeChatSessionResponse;
+import com.legalai.platform.system.service.wechat.WeChatAuthService;
+import com.legalai.platform.system.service.wechat.WeChatSessionResponse;
 
 @RestController
 @RequestMapping("/api/wxapp/auth")
