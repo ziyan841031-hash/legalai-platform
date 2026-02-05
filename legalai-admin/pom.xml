@@ -12,6 +12,7 @@
 
     <artifactId>legalai-admin</artifactId>
     <name>legalai-platform-admin</name>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
@@ -29,4 +30,13 @@
             <optional>true</optional>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

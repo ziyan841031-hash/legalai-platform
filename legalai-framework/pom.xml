@@ -12,6 +12,7 @@
 
     <artifactId>legalai-framework</artifactId>
     <name>legalai-platform-framework</name>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>

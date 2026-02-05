@@ -12,4 +12,5 @@
 
     <artifactId>legalai-quartz</artifactId>
     <name>legalai-platform-quartz</name>
+    <packaging>jar</packaging>
 </project>
