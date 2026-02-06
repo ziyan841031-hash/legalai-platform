@@ -29,6 +29,9 @@ public class ToolConfig {
 
     private String category;
 
+    @TableField("intent")
+    private String intent;
+
     private String status;
 
     @TableField(value = "config", typeHandler = JacksonTypeHandler.class)

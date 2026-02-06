@@ -328,6 +328,7 @@ CREATE TABLE tool_configs (
   tool_code VARCHAR(64) UNIQUE NOT NULL,
   tool_name VARCHAR(255) NOT NULL,
   category VARCHAR(64),
+  intent VARCHAR(128),
   status VARCHAR(32) NOT NULL DEFAULT 'ACTIVE',
   config JSONB NOT NULL DEFAULT '{}'::jsonb,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -339,6 +340,7 @@ COMMENT ON COLUMN tool_configs.id IS '主键ID';
 COMMENT ON COLUMN tool_configs.tool_code IS '工具编码';
 COMMENT ON COLUMN tool_configs.tool_name IS '工具名称';
 COMMENT ON COLUMN tool_configs.category IS '工具分类';
+COMMENT ON COLUMN tool_configs.intent IS '意图标识';
 COMMENT ON COLUMN tool_configs.status IS '状态';
 COMMENT ON COLUMN tool_configs.config IS '配置内容';
 COMMENT ON COLUMN tool_configs.created_at IS '创建时间';
