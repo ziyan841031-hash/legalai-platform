@@ -1,0 +1,6 @@
+<view class="container">
+  <view class="title">法律智能问答</view>
+  <textarea class="question" placeholder="请输入你的问题" value="{{question}}" bindinput="handleInput" />
+  <button class="ask-btn" bindtap="handleAsk">护栏决策</button>
+  <view class="result" wx:if="{{result}}">{{result}}</view>
+</view>
