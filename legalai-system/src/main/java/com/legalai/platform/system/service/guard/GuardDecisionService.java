@@ -41,8 +41,8 @@ public class GuardDecisionService {
             if (normalized.contains(keyword.getKeyword().toLowerCase(Locale.ROOT))) {
                 String hitKeyword = keyword.getKeyword();
                 // 命中高危关键字：仍上送 Dify，标记命中状态与命中词
-                difyChatflowService.askChatflow(question, 1, hitKeyword);
-                return GuardDecisionResult.rejected("命中高危关键字: " + hitKeyword);
+                String answer = difyChatflowService.askChatflow(question, 1, hitKeyword);
+                return GuardDecisionResult.rejected("命中高危关键字: " + hitKeyword, answer);
             }
         }
         // 未命中高危关键字：上送 Dify，命中标记为 0，命中词为空
@@ -64,6 +64,10 @@ public class GuardDecisionService {
 
         public static GuardDecisionResult rejected(String reason) {
             return new GuardDecisionResult(false, reason, null);
+        }
+
+        public static GuardDecisionResult rejected(String reason, String answer) {
+            return new GuardDecisionResult(false, reason, answer);
         }
     }
 }
