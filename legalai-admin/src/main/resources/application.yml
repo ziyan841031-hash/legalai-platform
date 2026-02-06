@@ -37,5 +37,5 @@ wechat:
     code2-session-url: https://api.weixin.qq.com/sns/jscode2session
 
 dify:
-  base-url: https://api.dify.ai
+  base-url: http://172.21.70.142/v1
   api-key: your-dify-api-key

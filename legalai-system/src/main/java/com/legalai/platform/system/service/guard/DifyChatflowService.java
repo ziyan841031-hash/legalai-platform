@@ -2,7 +2,6 @@ package com.legalai.platform.system.service.guard;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.legalai.platform.system.domain.ToolConfig;
 import com.legalai.platform.system.mapper.ToolConfigMapper;
 import java.util.Map;
@@ -39,8 +38,8 @@ public class DifyChatflowService {
      */
     public String askChatflow(String question) {
         DifyChatflowResponse response = callChatflow(question);
-        String answer = response != null ? response.answer() : null;
-        String intent = response != null && response.metadata() != null ? response.metadata().intent() : null;
+        String answer = response != null ? response.html() : null;
+        String intent = response != null ? response.intent() : null;
         if (StringUtils.hasText(intent)) {
             ToolConfig tool = toolConfigMapper.selectOne(
                 new LambdaQueryWrapper<ToolConfig>()
@@ -60,20 +59,25 @@ public class DifyChatflowService {
     }
 
     private DifyChatflowResponse callChatflow(String question) {
-        if (!StringUtils.hasText(properties.getBaseUrl()) || !StringUtils.hasText(properties.getApiKey())) {
+        if (!StringUtils.hasText(properties.getBaseUrl())) {
             return null;
         }
-        String url = properties.getBaseUrl().replaceAll("/$", "") + "/v1/chat-messages";
+        String url = properties.getBaseUrl().replaceAll("/$", "");
         Map<String, Object> body = Map.of(
-            "inputs", Map.of(),
-            "query", question,
-            "response_mode", "blocking",
-            "user", "legalai-miniapp"
+            "sys", Map.of(
+                "query", question,
+                "inputs", Map.of(
+                    "api_guardrail_hit", 0,
+                    "api_guardrail_message", ""
+                )
+            )
         );
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.setBearerAuth(properties.getApiKey());
+            if (StringUtils.hasText(properties.getApiKey())) {
+                headers.setBearerAuth(properties.getApiKey());
+            }
             HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
             return restTemplate.postForObject(url, requestEntity, DifyChatflowResponse.class, Map.of());
         } catch (RestClientException ex) {
@@ -82,16 +86,12 @@ public class DifyChatflowService {
     }
 
     public record DifyChatflowResponse(
-        @JsonAlias({"answer"})
-        String answer,
-        @JsonProperty("metadata")
-        DifyMetadata metadata
-    ) {
-    }
-
-    public record DifyMetadata(
         @JsonAlias({"intent"})
-        String intent
+        String intent,
+        @JsonAlias({"risk_level"})
+        String riskLevel,
+        @JsonAlias({"html"})
+        String html
     ) {
     }
 
