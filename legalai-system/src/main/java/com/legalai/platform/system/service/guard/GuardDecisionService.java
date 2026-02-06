@@ -19,6 +19,12 @@ public class GuardDecisionService {
         this.difyChatflowService = difyChatflowService;
     }
 
+    /**
+     * 进行护栏决策。
+     *
+     * @param question 用户问题
+     * @return 护栏决策结果
+     */
     public GuardDecisionResult evaluate(String question) {
         if (!StringUtils.hasText(question)) {
             return GuardDecisionResult.rejected("问题不能为空");
@@ -27,6 +33,7 @@ public class GuardDecisionService {
         List<GuardKeyword> keywords = guardKeywordMapper.selectList(
             new LambdaQueryWrapper<GuardKeyword>().eq(GuardKeyword::getEnabled, true)
         );
+        // 命中高危关键字则拒绝
         for (GuardKeyword keyword : keywords) {
             if (keyword.getKeyword() == null) {
                 continue;
@@ -35,10 +42,18 @@ public class GuardDecisionService {
                 return GuardDecisionResult.rejected("命中高危关键字: " + keyword.getKeyword());
             }
         }
+        // 通过护栏后调用 Dify Chatflow（占位）
         String answer = difyChatflowService.askChatflow(question);
         return GuardDecisionResult.allowed(answer);
     }
 
+    /**
+     * 护栏决策结果。
+     *
+     * @param allowed 是否放行
+     * @param reason  拒绝原因
+     * @param answer  通过后的回答
+     */
     public record GuardDecisionResult(boolean allowed, String reason, String answer) {
         public static GuardDecisionResult allowed(String answer) {
             return new GuardDecisionResult(true, null, answer);
