@@ -34,6 +34,7 @@ Page({
               wx.setStorageSync("accessToken", accessToken);
               wx.setStorageSync("refreshToken", refreshToken);
               wx.showToast({ title: "登录成功", icon: "success" });
+              wx.redirectTo({ url: "/pages/home/home" });
             } else {
               wx.showToast({ title: "登录失败", icon: "none" });
             }
