@@ -65,6 +65,16 @@ public class TokenManager {
             .parseClaimsJws(token); // 解析令牌
     }
 
+    // 校验访问令牌并返回主体
+    public String validateAccessToken(String token) {
+        Jws<Claims> parsed = parseToken(token); // 解析令牌
+        String tokenType = parsed.getBody().get(CLAIM_TOKEN_TYPE, String.class); // 获取令牌类型
+        if (!TOKEN_TYPE_ACCESS.equals(tokenType)) { // 校验类型
+            throw new IllegalArgumentException("Invalid access token type"); // 抛出异常
+        }
+        return parsed.getBody().getSubject(); // 返回主体
+    }
+
     // 生成 JWT 字符串
     private String createToken(String subject, Map<String, Object> claims, String tokenType, long expiresInSeconds) {
         Instant now = Instant.now(); // 获取当前时间

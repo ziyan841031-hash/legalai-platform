@@ -1,8 +1,6 @@
 package com.legalai.platform.framework.security.web;
 
 import com.legalai.platform.framework.security.token.TokenManager;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,8 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) { // 校验格式
             String token = authHeader.substring(7); // 截取 token
             try {
-                Jws<Claims> claims = tokenManager.parseToken(token); // 解析 token
-                String subject = claims.getBody().getSubject(); // 获取主体
+                String subject = tokenManager.validateAccessToken(token); // 校验访问令牌并获取主体
                 UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(subject, null, Collections.emptyList()); // 构造认证信息
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request)); // 设置详情
