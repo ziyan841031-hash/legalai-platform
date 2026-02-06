@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.legalai.platform.system.domain.ToolConfig;
 import com.legalai.platform.system.mapper.ToolConfigMapper;
+import java.util.List;
 import java.util.Map;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -66,15 +67,17 @@ public class DifyChatflowService {
         if (!StringUtils.hasText(properties.getBaseUrl())) {
             return null;
         }
-        String url = properties.getBaseUrl().replaceAll("/$", "");
+        String url = properties.getBaseUrl().replaceAll("/$", "") + "/chat-messages";
         Map<String, Object> body = Map.of(
-            "sys", Map.of(
-                "query", question,
-                "inputs", Map.of(
-                    "api_guardrail_hit", apiGuardrailHit,
-                    "api_guardrail_message", apiGuardrailMessage == null ? "" : apiGuardrailMessage
-                )
-            )
+            "inputs", Map.of(
+                "api_guardrail_hit", apiGuardrailHit,
+                "api_guardrail_message", apiGuardrailMessage == null ? "" : apiGuardrailMessage
+            ),
+            "query", question,
+            "response_mode", "streaming",
+            "conversation_id", "",
+            "user", "abc-123",
+            "files", List.of()
         );
         try {
             HttpHeaders headers = new HttpHeaders();
