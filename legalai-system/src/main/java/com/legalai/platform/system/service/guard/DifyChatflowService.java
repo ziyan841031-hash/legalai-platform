@@ -37,7 +37,11 @@ public class DifyChatflowService {
      * @return Chatflow 回答（若匹配到意图则附带推荐工具）
      */
     public String askChatflow(String question) {
-        DifyChatflowResponse response = callChatflow(question);
+        return askChatflow(question, 0, "");
+    }
+
+    public String askChatflow(String question, int apiGuardrailHit, String apiGuardrailMessage) {
+        DifyChatflowResponse response = callChatflow(question, apiGuardrailHit, apiGuardrailMessage);
         String answer = response != null ? response.html() : null;
         String intent = response != null ? response.intent() : null;
         if (StringUtils.hasText(intent)) {
@@ -58,7 +62,7 @@ public class DifyChatflowService {
         return StringUtils.hasText(answer) ? answer : "已通过护栏，等待响应";
     }
 
-    private DifyChatflowResponse callChatflow(String question) {
+    private DifyChatflowResponse callChatflow(String question, int apiGuardrailHit, String apiGuardrailMessage) {
         if (!StringUtils.hasText(properties.getBaseUrl())) {
             return null;
         }
@@ -67,8 +71,8 @@ public class DifyChatflowService {
             "sys", Map.of(
                 "query", question,
                 "inputs", Map.of(
-                    "api_guardrail_hit", 0,
-                    "api_guardrail_message", ""
+                    "api_guardrail_hit", apiGuardrailHit,
+                    "api_guardrail_message", apiGuardrailMessage == null ? "" : apiGuardrailMessage
                 )
             )
         );

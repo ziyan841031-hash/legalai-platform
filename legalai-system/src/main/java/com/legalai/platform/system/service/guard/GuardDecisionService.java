@@ -39,11 +39,14 @@ public class GuardDecisionService {
                 continue;
             }
             if (normalized.contains(keyword.getKeyword().toLowerCase(Locale.ROOT))) {
-                return GuardDecisionResult.rejected("命中高危关键字: " + keyword.getKeyword());
+                String hitKeyword = keyword.getKeyword();
+                // 命中高危关键字：仍上送 Dify，标记命中状态与命中词
+                difyChatflowService.askChatflow(question, 1, hitKeyword);
+                return GuardDecisionResult.rejected("命中高危关键字: " + hitKeyword);
             }
         }
-        // 通过护栏后调用 Dify Chatflow（占位）
-        String answer = difyChatflowService.askChatflow(question);
+        // 未命中高危关键字：上送 Dify，命中标记为 0，命中词为空
+        String answer = difyChatflowService.askChatflow(question, 0, "");
         return GuardDecisionResult.allowed(answer);
     }
 
