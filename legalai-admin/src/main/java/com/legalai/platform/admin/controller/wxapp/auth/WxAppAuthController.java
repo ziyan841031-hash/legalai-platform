@@ -36,6 +36,12 @@ public class WxAppAuthController {
         if (request.phoneNumber() != null && !request.phoneNumber().isBlank()) {
             claims.put("phoneNumber", request.phoneNumber()); // 追加手机号声明
         }
+        if (request.phoneEncryptedData() != null && !request.phoneEncryptedData().isBlank()) {
+            claims.put("phoneEncryptedData", request.phoneEncryptedData()); // 追加加密手机号
+        }
+        if (request.phoneIv() != null && !request.phoneIv().isBlank()) {
+            claims.put("phoneIv", request.phoneIv()); // 追加手机号 IV
+        }
         TokenPair tokenPair = tokenManager.issueTokenPair(subject, claims); // 生成令牌对
         return ResponseEntity.ok(tokenPair); // 返回登录结果
     }

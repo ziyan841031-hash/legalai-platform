@@ -1,10 +1,14 @@
 Page({
   data: {
-    phoneNumber: ""
+    phoneNumber: "",
+    encryptedData: "",
+    iv: ""
   },
   handleGetPhoneNumber(e) {
     const phoneNumber = e.detail && e.detail.phoneNumber ? e.detail.phoneNumber : "";
-    this.setData({ phoneNumber });
+    const encryptedData = e.detail && e.detail.encryptedData ? e.detail.encryptedData : "";
+    const iv = e.detail && e.detail.iv ? e.detail.iv : "";
+    this.setData({ phoneNumber, encryptedData, iv });
     this.handleWxLogin();
   },
   handleWxLogin() {
@@ -18,7 +22,12 @@ Page({
         wx.request({
           url: `${app.globalData.apiBaseUrl}/api/wxapp/auth/login`,
           method: "POST",
-          data: { code: res.code, phoneNumber: this.data.phoneNumber },
+          data: {
+            code: res.code,
+            phoneNumber: this.data.phoneNumber,
+            phoneEncryptedData: this.data.encryptedData,
+            phoneIv: this.data.iv
+          },
           success: (resp) => {
             const { accessToken, refreshToken } = resp.data || {};
             if (accessToken && refreshToken) {
