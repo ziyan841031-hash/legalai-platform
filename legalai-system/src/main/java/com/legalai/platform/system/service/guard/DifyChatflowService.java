@@ -46,8 +46,8 @@ public class DifyChatflowService {
 
     public String askChatflow(String question, int apiGuardrailHit, String apiGuardrailMessage) {
         DifyChatflowResponse response = callChatflow(question, apiGuardrailHit, apiGuardrailMessage);
-        String answer = response != null ? response.html() : null;
-        String intent = response != null ? response.intent() : null;
+        String answer = response != null ? response.resolvedAnswer() : null;
+        String intent = response != null ? response.resolvedIntent() : null;
         if (StringUtils.hasText(intent)) {
             ToolConfig tool = toolConfigMapper.selectOne(
                 new LambdaQueryWrapper<ToolConfig>()
@@ -130,13 +130,55 @@ public class DifyChatflowService {
     }
 
     public record DifyChatflowResponse(
+        @JsonAlias({"event"})
+        String event,
+        @JsonAlias({"task_id"})
+        String taskId,
+        @JsonAlias({"id"})
+        String id,
+        @JsonAlias({"message_id"})
+        String messageId,
+        @JsonAlias({"conversation_id"})
+        String conversationId,
+        @JsonAlias({"mode"})
+        String mode,
+        @JsonAlias({"answer"})
+        String answer,
         @JsonAlias({"intent"})
         String intent,
         @JsonAlias({"risk_level"})
         String riskLevel,
         @JsonAlias({"html"})
-        String html
+        String html,
+        @JsonAlias({"metadata"})
+        Map<String, Object> metadata,
+        @JsonAlias({"created_at"})
+        Long createdAt
     ) {
+        public String resolvedAnswer() {
+            return StringUtils.hasText(answer) ? answer : html;
+        }
+
+        public String resolvedIntent() {
+            if (StringUtils.hasText(intent)) {
+                return intent;
+            }
+            if (metadata == null || metadata.isEmpty()) {
+                return null;
+            }
+            Object directIntent = metadata.get("intent");
+            if (directIntent instanceof String str && StringUtils.hasText(str)) {
+                return str;
+            }
+            Object outputs = metadata.get("outputs");
+            if (outputs instanceof Map<?, ?> outputsMap) {
+                Object nestedIntent = outputsMap.get("intent");
+                if (nestedIntent instanceof String str && StringUtils.hasText(str)) {
+                    return str;
+                }
+            }
+            return null;
+        }
     }
 
     @Component
