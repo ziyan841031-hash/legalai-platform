@@ -78,7 +78,7 @@ public class DifyChatflowService {
         String url = properties.getBaseUrl().replaceAll("/$", "") + "/chat-messages";
         Map<String, Object> body = Map.of(
             "inputs", Map.of(
-                "api_guardrail_hit", apiGuardrailHit,
+                "api_guardrail_hit", String.valueOf(apiGuardrailHit),
                 "api_guardrail_message", apiGuardrailMessage == null ? "" : apiGuardrailMessage
             ),
             "query", question,
