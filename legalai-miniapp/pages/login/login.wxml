@@ -1,0 +1,5 @@
+<view class="container">
+  <view class="logo">LegalAI</view>
+  <view class="subtitle">请使用微信手机号授权登录</view>
+  <button class="login-btn" open-type="getPhoneNumber" bindgetphonenumber="handleGetPhoneNumber">微信手机号授权登录</button>
+</view>
