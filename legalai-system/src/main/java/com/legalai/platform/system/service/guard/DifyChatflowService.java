@@ -6,6 +6,7 @@ import com.legalai.platform.system.domain.ToolConfig;
 import com.legalai.platform.system.mapper.ToolConfigMapper;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -13,10 +14,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 
+@Slf4j
 @Service
 public class DifyChatflowService {
 
@@ -86,8 +89,15 @@ public class DifyChatflowService {
                 headers.setBearerAuth(properties.getApiKey());
             }
             HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-            return restTemplate.postForObject(url, requestEntity, DifyChatflowResponse.class, Map.of());
+            log.info("调用 Dify 开始, url={}, payload={}", url, body);
+            DifyChatflowResponse response = restTemplate.postForObject(url, requestEntity, DifyChatflowResponse.class, Map.of());
+            log.info("调用 Dify 成功, response={}", response);
+            return response;
+        } catch (HttpStatusCodeException ex) {
+            log.error("调用 Dify 失败, status={}, responseBody={}, payload={}", ex.getStatusCode(), ex.getResponseBodyAsString(), body, ex);
+            return null;
         } catch (RestClientException ex) {
+            log.error("调用 Dify 异常, payload={}", body, ex);
             return null;
         }
     }
