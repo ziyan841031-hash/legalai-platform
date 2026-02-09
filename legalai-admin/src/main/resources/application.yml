@@ -39,3 +39,4 @@ wechat:
 dify:
   base-url: http://172.21.70.142/v1
   api-key: your-dify-api-key
+  user-id: abc-123

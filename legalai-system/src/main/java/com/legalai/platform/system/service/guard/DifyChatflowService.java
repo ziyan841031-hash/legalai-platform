@@ -70,6 +70,11 @@ public class DifyChatflowService {
         if (!StringUtils.hasText(properties.getBaseUrl())) {
             return null;
         }
+        String normalizedApiKey = normalizeApiKey(properties.getApiKey());
+        if (!StringUtils.hasText(normalizedApiKey)) {
+            log.error("调用 Dify 失败：未配置有效 API Key，请检查 dify.api-key");
+            return null;
+        }
         String url = properties.getBaseUrl().replaceAll("/$", "") + "/chat-messages";
         Map<String, Object> body = Map.of(
             "inputs", Map.of(
@@ -77,19 +82,17 @@ public class DifyChatflowService {
                 "api_guardrail_message", apiGuardrailMessage == null ? "" : apiGuardrailMessage
             ),
             "query", question,
-            "response_mode", "streaming",
+            "response_mode", "blocking",
             "conversation_id", "",
-            "user", "abc-123",
+            "user", properties.getUserId(),
             "files", List.of()
         );
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            if (StringUtils.hasText(properties.getApiKey())) {
-                headers.setBearerAuth(properties.getApiKey());
-            }
+            headers.setBearerAuth(normalizedApiKey);
             HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-            log.info("调用 Dify 开始, url={}, payload={}", url, body);
+            log.info("调用 Dify 开始, url={}, apiKeyPrefix={}, payload={}", url, maskApiKey(normalizedApiKey), body);
             DifyChatflowResponse response = restTemplate.postForObject(url, requestEntity, DifyChatflowResponse.class, Map.of());
             log.info("调用 Dify 成功, response={}", response);
             return response;
@@ -100,6 +103,30 @@ public class DifyChatflowService {
             log.error("调用 Dify 异常, payload={}", body, ex);
             return null;
         }
+    }
+
+    private String normalizeApiKey(String apiKey) {
+        if (!StringUtils.hasText(apiKey)) {
+            return null;
+        }
+        String normalized = apiKey.trim();
+        if (normalized.startsWith("Bearer ")) {
+            normalized = normalized.substring("Bearer ".length()).trim();
+        }
+        if (!StringUtils.hasText(normalized) || "your-dify-api-key".equalsIgnoreCase(normalized)) {
+            return null;
+        }
+        return normalized;
+    }
+
+    private String maskApiKey(String apiKey) {
+        if (!StringUtils.hasText(apiKey)) {
+            return "EMPTY";
+        }
+        if (apiKey.length() <= 6) {
+            return "***";
+        }
+        return apiKey.substring(0, 3) + "***" + apiKey.substring(apiKey.length() - 3);
     }
 
     public record DifyChatflowResponse(
@@ -125,6 +152,11 @@ public class DifyChatflowService {
          */
         private String apiKey;
 
+        /**
+         * Dify user 标识
+         */
+        private String userId = "abc-123";
+
         public String getBaseUrl() {
             return baseUrl;
         }
@@ -139,6 +171,14 @@ public class DifyChatflowService {
 
         public void setApiKey(String apiKey) {
             this.apiKey = apiKey;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
         }
     }
 }
